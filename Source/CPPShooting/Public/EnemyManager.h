@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Enemy.generated.h"
+#include "EnemyManager.generated.h"
 
 UCLASS()
-class CPPSHOOTING_API AEnemy : public AActor
+class CPPSHOOTING_API AEnemyManager : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AEnemy();
+	AEnemyManager();
 
 protected:
 	// Called when the game starts or when spawned
@@ -24,16 +24,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
+	//일정시간( 몇 초 마다..)
 	UPROPERTY(EditAnywhere)
-	class UBoxComponent* compBox;
+	float createTime = 2;
 
+	//흐르는시간
+	float currTime = 0;
+
+	//에너미 공장
 	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* compMesh;
-
-	//속력
-	UPROPERTY(EditAnywhere)
-	float speed = 400;
-
-	//이동방향
-	FVector dir;
+	TSubclassOf<class AEnemy> enemyFactory;
 };
