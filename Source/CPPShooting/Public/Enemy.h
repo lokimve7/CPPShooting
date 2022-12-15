@@ -4,18 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Bullet.generated.h"
-
-#pragma warning(disable: 4458)
+#include "Enemy.generated.h"
 
 UCLASS()
-class CPPSHOOTING_API ABullet : public AActor
+class CPPSHOOTING_API AEnemy : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ABullet();
+	AEnemy();
 
 protected:
 	// Called when the game starts or when spawned
@@ -25,14 +23,4 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
-public:
-	UPROPERTY(EditAnywhere)
-	class UBoxComponent* compBox;
-
-	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* compMesh;
-
-	UPROPERTY(EditAnywhere)
-	float speed = 1000;
 };

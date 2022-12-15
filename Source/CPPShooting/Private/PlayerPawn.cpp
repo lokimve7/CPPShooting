@@ -4,7 +4,7 @@
 #include "PlayerPawn.h"
 #include <Components/BoxComponent.h>
 #include "Bullet.h"
-
+#include "PointerTest.h"
 
 
 // Sets default values
@@ -36,8 +36,6 @@ APlayerPawn::APlayerPawn()
 void APlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
-
 }
 
 // Called every frame
@@ -94,4 +92,5 @@ void APlayerPawn::InputFire()
 	bullet->SetActorLocation(GetActorLocation());
 	bullet->SetActorRotation(GetActorRotation());
 }
+
 
