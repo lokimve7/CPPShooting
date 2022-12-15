@@ -3,3 +3,7 @@
 
 #include "CPPShootingGameModeBase.h"
 
+ACPPShootingGameModeBase::ACPPShootingGameModeBase()
+{
+	
+}

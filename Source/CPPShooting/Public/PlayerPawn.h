@@ -30,4 +30,21 @@ public:
 	UPROPERTY(EditAnywhere)
 	float speed = 500;
 
+	UPROPERTY(EditAnywhere)
+	class UBoxComponent* compBox;
+
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* compMesh;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ABullet> bulletFactory;
+
+	float h;
+	float v;
+
+public:
+	//사용자의 입력을 처리 함수
+	void InputHorizontal(float value);
+	void InputVertical(float value);
+	void InputFire();
 };

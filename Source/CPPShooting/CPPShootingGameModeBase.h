@@ -13,5 +13,7 @@ UCLASS()
 class CPPSHOOTING_API ACPPShootingGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	ACPPShootingGameModeBase();
 };
