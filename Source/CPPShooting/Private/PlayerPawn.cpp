@@ -19,6 +19,8 @@ APlayerPawn::APlayerPawn()
 	SetRootComponent(compBox);
 	//Box Extent 값을 50, 50, 50 으로 하자
 	compBox->SetBoxExtent(FVector(50, 50, 50));
+	//Collision Preset 을 PlayerPreset 으로 하자
+	compBox->SetCollisionProfileName(TEXT("PlayerPreset"));
 
 	//StaticMeshComponent
 	compMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MESH"));
@@ -30,6 +32,8 @@ APlayerPawn::APlayerPawn()
 	{
 		compMesh->SetStaticMesh(tempMesh.Object);
 	}
+	compMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	
 }
 
 // Called when the game starts or when spawned
@@ -57,6 +61,8 @@ void APlayerPawn::Tick(float DeltaTime)
 
 	FVector p = p0 + dir * speed * DeltaTime;
 	SetActorLocation(p);
+
+	
 }
 
 // Called to bind functionality to input
@@ -87,10 +93,7 @@ void APlayerPawn::InputVertical(float value)
 void APlayerPawn::InputFire()
 {	
 	//2. 총알공장에서 총알을 만든다.
-	ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bulletFactory);
-	//3. 위치, 회전값을 셋팅한다
-	bullet->SetActorLocation(GetActorLocation());
-	bullet->SetActorRotation(GetActorRotation());
+	ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bulletFactory, GetActorLocation(), GetActorRotation());
 }
 
 
