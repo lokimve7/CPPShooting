@@ -62,7 +62,16 @@ void APlayerPawn::Tick(float DeltaTime)
 	FVector p = p0 + dir * speed * DeltaTime;
 	SetActorLocation(p);
 
-	
+	//시간을 흐르게 한다.
+	currTime += DeltaTime;
+	//흐르는 시간이 발사시간보다 커지면
+	if (currTime > fireTime)
+	{
+		//총알을 발사한다.
+		InputFire();
+		//흐르는 시간을 초기화
+		currTime = 0;
+	}
 }
 
 // Called to bind functionality to input

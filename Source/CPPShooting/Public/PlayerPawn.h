@@ -42,6 +42,12 @@ public:
 	float h;
 	float v;
 
+	//흐르는 시간
+	float currTime = 0;
+	//발사 시간
+	UPROPERTY(EditAnywhere)
+	float fireTime = 0.5f;
+
 public:
 	//사용자의 입력을 처리 함수
 	void InputHorizontal(float value);
