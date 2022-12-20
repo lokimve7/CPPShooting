@@ -7,6 +7,7 @@
 #include "PlayerPawn.h"
 #include <Particles/ParticleSystem.h>
 #include "Bullet.h"
+#include "../CPPShootingGameModeBase.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -114,6 +115,12 @@ void AEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
 
 		//폭발 소리를 내고 싶다.
 		UGameplayStatics::PlaySound2D(GetWorld(), exploSound);
+
+		//ACPPShootingGameModeBase를 가져오자
+		AGameModeBase* mode = GetWorld()->GetAuthGameMode();
+		ACPPShootingGameModeBase* currMode = Cast<ACPPShootingGameModeBase>(mode);
+		//점수를 증가 시킨다
+		currMode->AddScore(2);
 	}
 	//2. 나를 파괴하자
 	Destroy();

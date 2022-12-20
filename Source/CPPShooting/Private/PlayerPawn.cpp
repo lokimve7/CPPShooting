@@ -110,9 +110,7 @@ void APlayerPawn::InputVertical(float value)
 }
 
 void APlayerPawn::InputFire()
-{	
-	
-	
+{		
 	//만약에 arrayBullet의 갯수가 0보다 클 때
 	if (arrayBullet.Num() > 0)
 	{

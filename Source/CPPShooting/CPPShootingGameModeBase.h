@@ -16,4 +16,20 @@ class CPPSHOOTING_API ACPPShootingGameModeBase : public AGameModeBase
 
 public:
 	ACPPShootingGameModeBase();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:
+	int32 currScore = 0;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UMainUI> mainWidget;
+
+	UPROPERTY()
+	class UMainUI* mainUI;
+
+public:
+	void AddScore(int32 addValue);
 };
