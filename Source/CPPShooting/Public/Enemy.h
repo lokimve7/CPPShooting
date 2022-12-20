@@ -45,4 +45,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class USoundBase* exploSound;
+
+	UPROPERTY();
+	class APlayerPawn* playerPawn;
 };

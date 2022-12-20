@@ -35,4 +35,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float speed = 1000;
+
+public:
+	void SetActive(bool isActive);
 };

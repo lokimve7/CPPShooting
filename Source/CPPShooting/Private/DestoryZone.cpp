@@ -3,6 +3,9 @@
 
 #include "DestoryZone.h"
 #include "Components/BoxComponent.h"
+#include "Bullet.h"
+#include <Kismet/GameplayStatics.h>
+#include "PlayerPawn.h"
 
 // Sets default values
 ADestoryZone::ADestoryZone()
@@ -24,7 +27,6 @@ ADestoryZone::ADestoryZone()
 void ADestoryZone::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -36,7 +38,25 @@ void ADestoryZone::Tick(float DeltaTime)
 
 void ADestoryZone::NotifyActorBeginOverlap(AActor* OtherActor)
 {
-	//ºÎµúÈù ³ðÀ» ÆÄ±«ÇÏÀÚ
-	OtherActor->Destroy();
+	//¸¸¾à¿¡ ºÎµúÈù ³ðÀÌ Bullet ÀÌ¸é 
+	if (OtherActor->GetName().Contains(TEXT("Bullet")))
+	{
+		//OtherActor -> ABullet ·Î Cast(Çüº¯È¯)
+		ABullet* bullet = Cast<ABullet>(OtherActor);
+		//ºñÈ°¼ºÈ­ ÇÏÀÚ
+		bullet->SetActive(false);
+		
+		//APlayerPawn À» Ã£ÀÚ
+		AActor* actor = UGameplayStatics::GetActorOfClass(GetWorld(), APlayerPawn::StaticClass());
+		APlayerPawn* player = Cast<APlayerPawn>(actor);
+		//ÅºÃ¢¿¡ ´Ù½Ã ³ÖÀÚ
+		player->arrayBullet.Add(bullet);
+	}
+	//±×·¸Áö ¾ÊÀ¸¸é
+	else
+	{
+		//ºÎµúÈù ³ðÀ» ÆÄ±«ÇÏÀÚ
+		OtherActor->Destroy();
+	}
 }
 

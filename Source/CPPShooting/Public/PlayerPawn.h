@@ -48,6 +48,14 @@ public:
 	UPROPERTY(EditAnywhere)
 	float fireTime = 0.5f;
 
+	//총알 탄창
+	UPROPERTY(EditAnywhere)
+	TArray<class ABullet*> arrayBullet;
+
+	//탄창 초기 갯수
+	UPROPERTY(EditAnywhere)
+	int32 bulletFirstCount = 10;
+
 public:
 	//사용자의 입력을 처리 함수
 	void InputHorizontal(float value);

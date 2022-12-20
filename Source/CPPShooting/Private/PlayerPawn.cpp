@@ -40,6 +40,16 @@ APlayerPawn::APlayerPawn()
 void APlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	for (int32 i = 0; i < bulletFirstCount; i++)
+	{
+		//총알을 생성한다.
+		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bulletFactory, GetActorLocation(), GetActorRotation());
+		//생성된 총알을 비활성화 하자
+		bullet->SetActive(false);
+		//생성된 총알을 arrayBullet 에 추가한다. 
+		arrayBullet.Add(bullet);
+	}	
 }
 
 // Called every frame
@@ -68,7 +78,7 @@ void APlayerPawn::Tick(float DeltaTime)
 	if (currTime > fireTime)
 	{
 		//총알을 발사한다.
-		InputFire();
+		//InputFire();
 		//흐르는 시간을 초기화
 		currTime = 0;
 	}
@@ -101,8 +111,26 @@ void APlayerPawn::InputVertical(float value)
 
 void APlayerPawn::InputFire()
 {	
-	//2. 총알공장에서 총알을 만든다.
-	ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bulletFactory, GetActorLocation(), GetActorRotation());
+	
+	
+	//만약에 arrayBullet의 갯수가 0보다 클 때
+	if (arrayBullet.Num() > 0)
+	{
+		//총알의 위치, 회전 값을 Player 값으로 셋팅한다.
+		arrayBullet[0]->SetActorLocation(GetActorLocation());
+		arrayBullet[0]->SetActorRotation(GetActorRotation());
+
+		//탄창에서 하나씩 빼서 총알을 활성화 시킨다.
+		arrayBullet[0]->SetActive(true);	
+
+		//탄창에서 뺀다.
+		arrayBullet.RemoveAt(0);
+	}
+	else
+	{
+		//2. 총알공장에서 총알을 만든다.
+		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bulletFactory, GetActorLocation(), GetActorRotation());
+	}
 }
 
 

@@ -28,5 +28,4 @@ public:
 public:
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* compBox;
-
 };

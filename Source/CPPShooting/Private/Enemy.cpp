@@ -6,6 +6,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "PlayerPawn.h"
 #include <Particles/ParticleSystem.h>
+#include "Bullet.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -56,11 +57,13 @@ void AEnemy::BeginPlay()
 	//랜덤한 값을 뽑는다.(1 ~ 100)
 	int32 rand = FMath::RandRange(1, 100);
 
+	//1. 플레이어를 찾자
+	AActor* player = UGameplayStatics::GetActorOfClass(GetWorld(), APlayerPawn::StaticClass());
+	playerPawn = Cast<APlayerPawn>(player);
+
 	//만약에 랜덤한 값이 50보다 작으면(50%)
-	if (rand < 100)
-	{
-		//1. 플레이어를 찾자
-		AActor* player = UGameplayStatics::GetActorOfClass(GetWorld(), APlayerPawn::StaticClass());
+	if (rand < 50)
+	{		
 		//2. 플레이어를 향하는 방향을 구하자. (타겟 - 나)
 		//만약에 player 가 존재한다면
 		if (player != nullptr)
@@ -100,8 +103,11 @@ void AEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
 	//만약에 부딪힌 놈의 이름이 Bullet 포함하고 있다면
 	if (OtherActor->GetName().Contains(TEXT("Bullet")))
 	{
-		//1. 부딪힌 놈 파괴하자
-		OtherActor->Destroy();
+		//총알을 비활성화
+		ABullet* bullet = Cast<ABullet>(OtherActor);
+		bullet->SetActive(false);
+		//총알을 탄창에 넣는다.
+		playerPawn->arrayBullet.Add(bullet);
 
 		//폭발 효과 이펙트를 생성한다.
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), exploFactory, GetActorLocation(), GetActorRotation());
