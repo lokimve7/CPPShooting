@@ -5,6 +5,7 @@
 #include <Components/TextBlock.h>
 #include <Components/CanvasPanelSlot.h>
 
+
 void UMainUI::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -26,6 +27,12 @@ void UMainUI::NativeConstruct()
 
 void UMainUI::UpdateCurrScoreUI(int32 score)
 {
+	//myDel.Execute();
+	/*myDel.ExecuteIfBound();	
+	myDel1.Broadcast(score);
+	myDel2.ExecuteIfBound(score);
+	myDel3.Broadcast(100);*/
+
 	//currScoreUI 의 text 값을 score 값으로 한다.
 	currScoreUI->SetText(FText::AsNumber(score));
 }
@@ -34,4 +41,5 @@ void UMainUI::UpdateBestScoreUI(int32 bestScore)
 {
 	//bestScoreUI 의 text 값을 bestScore 값으로 한다.
 	bestScoreUI->SetText(FText::AsNumber(bestScore));
+	
 }

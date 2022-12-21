@@ -28,6 +28,8 @@ AEnemy::AEnemy()
 	compBox->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Overlap);
 	//DestroyZone 은 Overlap 으로 한다.
 	compBox->SetCollisionResponseToChannel(ECC_GameTraceChannel4, ECR_Overlap);
+
+	
 	
 
 	compMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MESH"));
@@ -82,6 +84,8 @@ void AEnemy::BeginPlay()
 	{
 		dir = -GetActorUpVector();
 	}	
+
+	compBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnOverlap);
 }
 
 // Called every frame
@@ -100,7 +104,7 @@ void AEnemy::Tick(float DeltaTime)
 void AEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
-
+	return;
 	//만약에 부딪힌 놈의 이름이 Bullet 포함하고 있다면
 	if (OtherActor->GetName().Contains(TEXT("Bullet")))
 	{
@@ -108,7 +112,36 @@ void AEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
 		ABullet* bullet = Cast<ABullet>(OtherActor);
 		bullet->SetActive(false);
 		//총알을 탄창에 넣는다.
-		playerPawn->arrayBullet.Add(bullet);
+		//playerPawn->arrayBullet.Add(bullet);
+		bullet->onDestroyBullet.ExecuteIfBound(bullet);
+
+		//폭발 효과 이펙트를 생성한다.
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), exploFactory, GetActorLocation(), GetActorRotation());
+
+		//폭발 소리를 내고 싶다.
+		UGameplayStatics::PlaySound2D(GetWorld(), exploSound);
+
+		//ACPPShootingGameModeBase를 가져오자
+		AGameModeBase* mode = GetWorld()->GetAuthGameMode();
+		ACPPShootingGameModeBase* currMode = Cast<ACPPShootingGameModeBase>(mode);
+		//점수를 증가 시킨다
+		currMode->AddScore(2);
+	}
+	//2. 나를 파괴하자
+	Destroy();
+}
+
+void AEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	//만약에 부딪힌 놈의 이름이 Bullet 포함하고 있다면
+	if (OtherActor->GetName().Contains(TEXT("Bullet")))
+	{
+		//총알을 비활성화
+		ABullet* bullet = Cast<ABullet>(OtherActor);
+		bullet->SetActive(false);
+		//총알을 탄창에 넣는다.
+		//playerPawn->arrayBullet.Add(bullet);
+		bullet->onDestroyBullet.ExecuteIfBound(bullet);
 
 		//폭발 효과 이펙트를 생성한다.
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), exploFactory, GetActorLocation(), GetActorRotation());

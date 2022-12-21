@@ -12,6 +12,51 @@ ACPPShootingGameModeBase::ACPPShootingGameModeBase()
 	
 }
 
+void ACPPShootingGameModeBase::DelegateTest()
+{
+	//DECLARE_DELEGATE
+	//mainUI->myDel.BindUObject(this, &ACPPShootingGameModeBase::TestFunc);
+	//mainUI->myDel.BindUFunction(this, TEXT("TestFunc"));
+	/*mainUI->myDel.BindLambda([]()->void {
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(__FUNCTION__));
+	});*/
+	
+	//DECLARE_MULTICAST_DELEGATE_OneParam
+	/*mainUI->myDel1.AddUObject(this, &ACPPShootingGameModeBase::TestFunc1);
+	FDelegateHandle handle = mainUI->myDel1.AddUFunction(this, TEXT("TestFunc2"));
+	mainUI->myDel1.Remove(handle);*/
+	
+
+	//DECLARE_DYNAMIC_DELEGATE_OneParam
+	//mainUI->myDel2.BindDynamic(this, &ACPPShootingGameModeBase::TestFunc2);	
+	//mainUI->myDel2.BindUFunction(this, TEXT("TestFunc2"));	
+
+	//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam
+	//mainUI->myDel3.AddDynamic(this, &ACPPShootingGameModeBase::TestFunc1);
+	//mainUI->myDel3.AddDynamic(this, &ACPPShootingGameModeBase::TestFunc2);
+	//mainUI->myDel3.RemoveDynamic(this, &ACPPShootingGameModeBase::TestFunc2);
+}
+
+void ACPPShootingGameModeBase::TestFunc()
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(__FUNCTION__));
+}
+
+void ACPPShootingGameModeBase::TestFunc1(int32 n)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s , %d"), *FString(__FUNCTION__), n);
+}
+
+void ACPPShootingGameModeBase::TestFunc2(int32 n)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s , %d"), *FString(__FUNCTION__), n);
+}
+
+void ACPPShootingGameModeBase::TestFunc3(int32 score)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s , %d"), *FString(__FUNCTION__), score);
+}
+
 void ACPPShootingGameModeBase::BeginPlay()
 {
 	//mainUI 를 만든다.
@@ -21,6 +66,10 @@ void ACPPShootingGameModeBase::BeginPlay()
 
 	//최고점수 불러오자
 	LoadBestScore();
+
+	DelegateTest();
+	
+	Super::BeginPlay();
 }
 
 void ACPPShootingGameModeBase::AddScore(int32 addValue)

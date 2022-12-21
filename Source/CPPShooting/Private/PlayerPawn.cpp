@@ -49,6 +49,7 @@ void APlayerPawn::BeginPlay()
 		bullet->SetActive(false);
 		//생성된 총알을 arrayBullet 에 추가한다. 
 		arrayBullet.Add(bullet);
+		bullet->onDestroyBullet.BindUObject(this, &APlayerPawn::AddBullet);
 	}	
 }
 
@@ -128,7 +129,14 @@ void APlayerPawn::InputFire()
 	{
 		//2. 총알공장에서 총알을 만든다.
 		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bulletFactory, GetActorLocation(), GetActorRotation());
+		bullet->onDestroyBullet.BindUObject(this, &APlayerPawn::AddBullet);
 	}
+}
+
+void APlayerPawn::AddBullet(class ABullet* bullet)
+{
+	UE_LOG(LogTemp, Warning, TEXT("AddBullet"));
+	arrayBullet.Add(bullet);
 }
 
 
