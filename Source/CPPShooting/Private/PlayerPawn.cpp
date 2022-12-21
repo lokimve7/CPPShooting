@@ -40,7 +40,7 @@ APlayerPawn::APlayerPawn()
 void APlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+		
 	for (int32 i = 0; i < bulletFirstCount; i++)
 	{
 		//총알을 생성한다.

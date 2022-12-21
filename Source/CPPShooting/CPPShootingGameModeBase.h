@@ -22,7 +22,10 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	//현재점수
 	int32 currScore = 0;
+	//최고점수
+	int32 bestScore = 5;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UMainUI> mainWidget;
@@ -32,4 +35,6 @@ public:
 
 public:
 	void AddScore(int32 addValue);
+
+	void ShuffleStudy();
 };
