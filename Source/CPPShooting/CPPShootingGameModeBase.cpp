@@ -4,6 +4,8 @@
 #include "CPPShootingGameModeBase.h"
 #include "MainUI.h"
 #include <Blueprint/UserWidget.h>
+#include <Kismet/GameplayStatics.h>
+#include "BestScoreData.h"
 
 ACPPShootingGameModeBase::ACPPShootingGameModeBase()
 {
@@ -17,8 +19,8 @@ void ACPPShootingGameModeBase::BeginPlay()
 	//만든 UI 를 ViewPort에 붙힌다.
 	mainUI->AddToViewport();	
 
-	//최고점수를 셋팅하자
-	mainUI->UpdateBestScoreUI(bestScore);
+	//최고점수 불러오자
+	LoadBestScore();
 }
 
 void ACPPShootingGameModeBase::AddScore(int32 addValue)
@@ -35,7 +37,46 @@ void ACPPShootingGameModeBase::AddScore(int32 addValue)
 		//최고점수를 출력한다.
 		mainUI->UpdateBestScoreUI(bestScore);
 		//UE_LOG(LogTemp, Warning, TEXT("best score : %d"), bestScore);
+
+		//베스트 스코어 저장
+		SaveBestScore();
 	}	
+}
+
+void ACPPShootingGameModeBase::SaveBestScore()
+{
+	//bestScore -> BestScoreData 에 있는 saveBestScore 변수에 넣는다.
+
+	//1. UBestScoreData 를 하나 생성한다. (USaveGame*)
+	USaveGame* saveGame = UGameplayStatics::CreateSaveGameObject(UBestScoreData::StaticClass());
+	
+	//2. 생성한 놈을 UBestScoreData 로 Cast 하자
+	UBestScoreData* bestScoreData = Cast<UBestScoreData>(saveGame);
+
+	//3. saveBestScore = bestScore
+	bestScoreData->saveBestScore = bestScore;
+
+	//4. 저장한다.
+	UGameplayStatics::SaveGameToSlot(bestScoreData, TEXT("BEST_SCORE"), 0);
+}
+
+void ACPPShootingGameModeBase::LoadBestScore()
+{
+	//1. "BEST_SCORE"으로 되어 있는 데이터를 불러온다. (USaveGame*)
+	USaveGame* saveGame = UGameplayStatics::LoadGameFromSlot(TEXT("BEST_SCORE"), 0);
+
+	//2. 불러온 놈을 UBestScoreData 로 Cast 하자
+	UBestScoreData* bestScoreData = Cast<UBestScoreData>(saveGame);
+
+	//만약에 bestScoreData 가 nullptr 이 아니라면 (저장한 값이 있다면)
+	if (bestScoreData != nullptr)
+	{
+		//3. bestScore = saveBestScore
+		bestScore = bestScoreData->saveBestScore;
+
+		//4. Bestscore UI 를 갱신한다.
+		mainUI->UpdateBestScoreUI(bestScore);
+	}
 }
 
 

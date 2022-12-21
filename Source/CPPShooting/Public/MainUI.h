@@ -13,6 +13,10 @@ UCLASS()
 class CPPSHOOTING_API UMainUI : public UUserWidget
 {
 	GENERATED_BODY()
+
+protected:
+	//BeginPlay 와 같은 동작
+	virtual void NativeConstruct() override;
 	
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
