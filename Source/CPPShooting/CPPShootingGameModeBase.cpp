@@ -6,14 +6,27 @@
 #include <Blueprint/UserWidget.h>
 #include <Kismet/GameplayStatics.h>
 #include "BestScoreData.h"
+#include "GameOverUI.h"
 
 ACPPShootingGameModeBase::ACPPShootingGameModeBase()
 {
-	
+	ConstructorHelpers::FClassFinder<UMainUI> tempMainUI(TEXT("WidgetBlueprint'/Game/Blueprints/BP_MainUI.BP_MainUI_C'"));
+	if (tempMainUI.Succeeded())
+	{
+		mainWidget = tempMainUI.Class;
+	}
+
+	ConstructorHelpers::FClassFinder<UGameOverUI> tempGameOverUI(TEXT("WidgetBlueprint'/Game/Blueprints/BP_GameOverUI.BP_GameOverUI_C'"));
+	if (tempGameOverUI.Succeeded())
+	{
+		gameOverWidget = tempGameOverUI.Class;
+	}
 }
 
 void ACPPShootingGameModeBase::BeginPlay()
 {
+	Super::BeginPlay();
+
 	//mainUI 를 만든다.
 	mainUI = CreateWidget<UMainUI>(GetWorld(), mainWidget);
 	//만든 UI 를 ViewPort에 붙힌다.
@@ -79,8 +92,13 @@ void ACPPShootingGameModeBase::LoadBestScore()
 	}
 }
 
-
-
+void ACPPShootingGameModeBase::ShowGameOverUI()
+{
+	//GameOverUI 를 하나 만든다.
+	gameOverUI = CreateWidget<UGameOverUI>(GetWorld(), gameOverWidget);
+	//만든 UI를 화면에 띄운다.
+	gameOverUI->AddToViewport();
+}
 
 
 void ACPPShootingGameModeBase::ShuffleStudy()

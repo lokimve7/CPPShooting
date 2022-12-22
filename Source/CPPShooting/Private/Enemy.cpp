@@ -122,6 +122,15 @@ void AEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
 		//점수를 증가 시킨다
 		currMode->AddScore(2);
 	}
+	//그렇지 않고 만약에 부딪히 놈의 이름이 Player 를 포함하고 있으면
+	else if (OtherActor->GetName().Contains(TEXT("Player")))
+	{
+		//게임오버 UI를 띄우자
+		ACPPShootingGameModeBase* currMode = GetWorld()->GetAuthGameMode<ACPPShootingGameModeBase>();
+		currMode->ShowGameOverUI();
+	}
+
+
 	//2. 나를 파괴하자
 	Destroy();
 }

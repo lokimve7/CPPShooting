@@ -33,10 +33,18 @@ public:
 	UPROPERTY()
 	class UMainUI* mainUI;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UGameOverUI> gameOverWidget;
+
+	UPROPERTY()
+	class UGameOverUI* gameOverUI;
+
 public:
 	void AddScore(int32 addValue);
 	void SaveBestScore();
 	void LoadBestScore();
+
+	void ShowGameOverUI();
 
 
 	void ShuffleStudy();
