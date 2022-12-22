@@ -82,6 +82,9 @@ void AEnemy::BeginPlay()
 	{
 		dir = -GetActorUpVector();
 	}	
+
+	//충돌 오버랩 될 때 호출 되는 함수 등록
+	compBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnOverlap);
 }
 
 // Called every frame
@@ -101,6 +104,17 @@ void AEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
+	
+}
+
+void AEnemy::OnOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
+{
 	//만약에 부딪힌 놈의 이름이 Bullet 포함하고 있다면
 	if (OtherActor->GetName().Contains(TEXT("Bullet")))
 	{
@@ -108,7 +122,8 @@ void AEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
 		ABullet* bullet = Cast<ABullet>(OtherActor);
 		bullet->SetActive(false);
 		//총알을 탄창에 넣는다.
-		playerPawn->arrayBullet.Add(bullet);
+		bullet->onDestroyBullet.Broadcast(bullet);
+		//playerPawn->arrayBullet.Add(bullet);
 
 		//폭발 효과 이펙트를 생성한다.
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), exploFactory, GetActorLocation(), GetActorRotation());
@@ -128,6 +143,12 @@ void AEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
 		//게임오버 UI를 띄우자
 		ACPPShootingGameModeBase* currMode = GetWorld()->GetAuthGameMode<ACPPShootingGameModeBase>();
 		currMode->ShowGameOverUI();
+
+		//게임을 일시 정지
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
+
+		//마우스 커서를 보이게 하자
+		GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 	}
 
 

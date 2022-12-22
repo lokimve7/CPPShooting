@@ -6,9 +6,10 @@
 #include "Blueprint/UserWidget.h"
 #include "MainUI.generated.h"
 
-/**
- * 
- */
+DECLARE_DELEGATE(FFirstDel);
+DECLARE_DELEGATE_OneParam(FSndDel, int32);
+DECLARE_MULTICAST_DELEGATE_OneParam(FThdDel, int32);
+
 UCLASS()
 class CPPSHOOTING_API UMainUI : public UUserWidget
 {
@@ -28,4 +29,20 @@ public:
 public:
 	void UpdateCurrScoreUI(int32 score);
 	void UpdateBestScoreUI(int32 bestScore);
+
+public:
+	FFirstDel onFirstDel;
+	UFUNCTION()
+	void FuncFirstDel();
+
+	FSndDel onSndDel;
+	UFUNCTION()
+	void FuncSndDel(int32 number);
+
+	FThdDel onThdDel;
+	UFUNCTION()
+	void FuncThdDel(int32 number);
+
+	UFUNCTION()
+	void FuncThdDel2(int32 number);
 };

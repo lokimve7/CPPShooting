@@ -45,12 +45,14 @@ void ADestoryZone::NotifyActorBeginOverlap(AActor* OtherActor)
 		ABullet* bullet = Cast<ABullet>(OtherActor);
 		//비활성화 하자
 		bullet->SetActive(false);
-		
-		//APlayerPawn 을 찾자
-		AActor* actor = UGameplayStatics::GetActorOfClass(GetWorld(), APlayerPawn::StaticClass());
-		APlayerPawn* player = Cast<APlayerPawn>(actor);
-		//탄창에 다시 넣자
-		player->arrayBullet.Add(bullet);
+		//탄창에 넣는다.
+		bullet->onDestroyBullet.Broadcast(bullet);
+
+		////APlayerPawn 을 찾자
+		//AActor* actor = UGameplayStatics::GetActorOfClass(GetWorld(), APlayerPawn::StaticClass());
+		//APlayerPawn* player = Cast<APlayerPawn>(actor);
+		////탄창에 다시 넣자
+		//player->arrayBullet.Add(bullet);
 	}
 	//그렇지 않으면
 	else

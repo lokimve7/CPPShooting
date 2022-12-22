@@ -15,6 +15,10 @@ UCLASS()
 class CPPSHOOTING_API UGameOverUI : public UUserWidget
 {
 	GENERATED_BODY()
+
+protected:
+	//BeginPlay 와 같은 동작
+	virtual void NativeConstruct() override;
 	
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
@@ -22,4 +26,11 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* btnQuit;
+
+public:
+	UFUNCTION()
+	void Retry();
+
+	UFUNCTION()
+	void Quit();
 };

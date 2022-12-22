@@ -8,6 +8,8 @@
 
 #pragma warning(disable: 4458)
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDestroyBullet, ABullet*, bullet);
+
 UCLASS()
 class CPPSHOOTING_API ABullet : public AActor
 {
@@ -35,6 +37,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float speed = 1000;
+
+	FDestroyBullet onDestroyBullet;
 
 public:
 	void SetActive(bool isActive);

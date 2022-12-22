@@ -22,16 +22,48 @@ void UMainUI::NativeConstruct()
 
 	//위치를 바꾸자
 	canvasSlot->SetPosition(FVector2D(500, 108));
+
+	//딜리게이트에 함수 등록
+	onFirstDel.BindUObject(this, &UMainUI::FuncFirstDel);
+	onSndDel.BindUFunction(this, TEXT("FuncSndDel"));
+	onThdDel.AddUObject(this, &UMainUI::FuncThdDel);
+	onThdDel.AddUObject(this, &UMainUI::FuncThdDel2);
+	onThdDel.AddUObject(this, &UMainUI::FuncSndDel);
 }
 
 void UMainUI::UpdateCurrScoreUI(int32 score)
 {
 	//currScoreUI 의 text 값을 score 값으로 한다.
 	currScoreUI->SetText(FText::AsNumber(score));
+
+	//딜리게이트에 등록된 함수 실행
+	onFirstDel.ExecuteIfBound();
+	onSndDel.ExecuteIfBound(score);
+	onThdDel.Broadcast(score);
 }
 
 void UMainUI::UpdateBestScoreUI(int32 bestScore)
 {
 	//bestScoreUI 의 text 값을 bestScore 값으로 한다.
 	bestScoreUI->SetText(FText::AsNumber(bestScore));
+}
+
+void UMainUI::FuncFirstDel()
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(__FUNCTION__));
+}
+
+void UMainUI::FuncSndDel(int32 number)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s, %d"), *FString(__FUNCTION__), number);
+}
+
+void UMainUI::FuncThdDel(int32 number)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s, %d"), *FString(__FUNCTION__), number);
+}
+
+void UMainUI::FuncThdDel2(int32 number)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s, %d"), *FString(__FUNCTION__), number);
 }

@@ -61,4 +61,7 @@ public:
 	void InputHorizontal(float value);
 	void InputVertical(float value);
 	void InputFire();
+
+	UFUNCTION()
+	void AddBullet(class ABullet* bullet);
 };
