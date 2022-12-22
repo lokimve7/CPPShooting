@@ -5,6 +5,7 @@
 #include <Components/BoxComponent.h>
 #include "Bullet.h"
 #include "PointerTest.h"
+#include <Kismet/KismetMathLibrary.h>
 
 
 // Sets default values
@@ -75,15 +76,27 @@ void APlayerPawn::Tick(float DeltaTime)
 	FVector p = p0 + dir * speed * DeltaTime;
 	SetActorLocation(p);
 
-	//시간을 흐르게 한다.
-	currTime += DeltaTime;
-	//흐르는 시간이 발사시간보다 커지면
-	if (currTime > fireTime)
+	if (skill3FireCount > 0)
 	{
-		//총알을 발사한다.
-		//InputFire();
-		//흐르는 시간을 초기화
-		currTime = 0;
+		//시간을 흐르게 한다.
+		currTime += DeltaTime;
+		//흐르는 시간이 발사시간보다 커지면
+		if (currTime > fireTime)
+		{
+			//총알을 발사한다.
+			//InputFire();
+			//흐르는 시간을 초기화
+			currTime = 0;
+
+
+			int fireCount = 100;
+			float ratio = 360.0f / fireCount;
+			FRotator rot = FRotator(0, 0, ratio * (fireCount - skill3FireCount));
+			FVector v = rot.RotateVector(FVector::UpVector); //rot.Quaternion() * FVector::UpVector; //	
+			rot = UKismetMathLibrary::MakeRotFromXZ(FVector::ForwardVector, v);
+			FireBullet(GetActorLocation(), rot);
+			skill3FireCount--;
+		}
 	}
 }
 
@@ -98,6 +111,10 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis(TEXT("Vertical"), this, &APlayerPawn::InputVertical);
 	//Fire 가 호출될 때 실행되는 함수 등록
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Released, this, &APlayerPawn::InputFire);
+
+	PlayerInputComponent->BindAction(TEXT("Skill1"), IE_Released, this, &APlayerPawn::InputSkill1);
+	PlayerInputComponent->BindAction(TEXT("Skill2"), IE_Released, this, &APlayerPawn::InputSkill2);
+	PlayerInputComponent->BindAction(TEXT("Skill3"), IE_Released, this, &APlayerPawn::InputSkill3);
 }
 
 void APlayerPawn::InputHorizontal(float value)
@@ -112,17 +129,54 @@ void APlayerPawn::InputVertical(float value)
 	v = value;
 }
 
+void APlayerPawn::InputSkill1()
+{
+	int32 fireCount = 3;
+
+	for (int i = 0; i < fireCount; i++)
+	{
+		float y = i * 100 - ((fireCount - 1) * 100) / 2;
+		FVector pos = GetActorLocation();
+		pos.Y += y;
+
+		FireBullet(pos, GetActorRotation());
+	}
+}
+
+void APlayerPawn::InputSkill2()
+{
+	int fireCount = 10;
+	float ratio = 360.0f / fireCount;
+	for (int i = 0; i < fireCount; i++)
+	{
+		FRotator rot = FRotator(0, 0, ratio * i);
+		FVector v = rot.RotateVector(FVector::UpVector); //rot.Quaternion() * FVector::UpVector; //	
+		rot = UKismetMathLibrary::MakeRotFromXZ(FVector::ForwardVector, v);
+		FireBullet(GetActorLocation(), rot);
+	}
+}
+
+void APlayerPawn::InputSkill3()
+{
+	skill3FireCount = 100;
+}
+
 void APlayerPawn::InputFire()
-{		
+{	
+	FireBullet(GetActorLocation(), GetActorRotation());	
+}
+
+void APlayerPawn::FireBullet(FVector pos, FRotator rot)
+{
 	//만약에 arrayBullet의 갯수가 0보다 클 때
 	if (arrayBullet.Num() > 0)
 	{
 		//총알의 위치, 회전 값을 Player 값으로 셋팅한다.
-		arrayBullet[0]->SetActorLocation(GetActorLocation());
-		arrayBullet[0]->SetActorRotation(GetActorRotation());
+		arrayBullet[0]->SetActorLocation(pos);
+		arrayBullet[0]->SetActorRotation(rot);
 
 		//탄창에서 하나씩 빼서 총알을 활성화 시킨다.
-		arrayBullet[0]->SetActive(true);	
+		arrayBullet[0]->SetActive(true);
 
 		//탄창에서 뺀다.
 		arrayBullet.RemoveAt(0);
@@ -130,7 +184,7 @@ void APlayerPawn::InputFire()
 	else
 	{
 		//2. 총알공장에서 총알을 만든다.
-		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bulletFactory, GetActorLocation(), GetActorRotation());
+		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bulletFactory, pos, rot);
 		//파괴될 때 호출할 수 있는 함수 등록(딜리게이트 이용!)
 		bullet->onDestroyBullet.AddDynamic(this, &APlayerPawn::AddBullet);
 	}

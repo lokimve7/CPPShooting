@@ -46,7 +46,7 @@ public:
 	float currTime = 0;
 	//발사 시간
 	UPROPERTY(EditAnywhere)
-	float fireTime = 0.5f;
+	float fireTime = 0.001f;
 
 	//총알 탄창
 	UPROPERTY(EditAnywhere)
@@ -56,11 +56,17 @@ public:
 	UPROPERTY(EditAnywhere)
 	int32 bulletFirstCount = 10;
 
+	int skill3FireCount = 0;
+
 public:
 	//사용자의 입력을 처리 함수
 	void InputHorizontal(float value);
 	void InputVertical(float value);
 	void InputFire();
+	void InputSkill1();
+	void InputSkill2();
+	void InputSkill3();
+	void FireBullet(FVector pos, FRotator rot);
 
 	UFUNCTION()
 	void AddBullet(class ABullet* bullet);
