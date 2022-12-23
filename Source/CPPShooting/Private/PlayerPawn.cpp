@@ -76,15 +76,25 @@ void APlayerPawn::Tick(float DeltaTime)
 	FVector p = p0 + dir * speed * DeltaTime;
 	SetActorLocation(p);
 
-	//시간을 흐르게 한다.
-	currTime += DeltaTime;
-	//흐르는 시간이 발사시간보다 커지면
-	if (currTime > fireTime)
+	//만약에 currFireBulletCount 값이 10 보다 작으면
+	if (currFireBulletCount < 10)
 	{
-		//총알을 발사한다.
-		//InputFire();
-		//흐르는 시간을 초기화
-		currTime = 0;
+		//시간을 흐르게 한다.
+		currTime += DeltaTime;
+		//흐르는 시간이 발사시간보다 커지면
+		if (currTime > fireTime)
+		{
+			//총알을 발사한다.
+			int32 angle = 360 / 10;
+			FRotator rot = FRotator(0, 0, angle * currFireBulletCount);
+			MakeBullet(GetActorLocation(), rot);
+
+			//발사 카운트를 증가시킨다.
+			currFireBulletCount++;
+
+			//흐르는 시간을 초기화
+			currTime = 0;
+		}
 	}
 }
 
@@ -103,7 +113,7 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	//Skill_1 등록
 	PlayerInputComponent->BindAction(TEXT("Skill_1"), IE_Released, this, &APlayerPawn::InputSkill1);
 	//SKill_2 등록
-	PlayerInputComponent->BindAction<FTest>(TEXT("Skill_2"), IE_Released, this, &APlayerPawn::InputSkill2);
+	PlayerInputComponent->BindAction(TEXT("Skill_2"), IE_Released, this, &APlayerPawn::InputSkill2);
 }
 
 
@@ -131,14 +141,14 @@ void APlayerPawn::InputFire()
 	InputSkill1();
 }
 
-void APlayerPawn::MakeBullet(FVector pos)
+void APlayerPawn::MakeBullet(FVector pos, FRotator rot)
 {
 	//만약에 arrayBullet의 갯수가 0보다 클 때
 	if (arrayBullet.Num() > 0)
 	{
 		//총알의 위치, 회전 값을 Player 값으로 셋팅한다.
 		arrayBullet[0]->SetActorLocation(pos);
-		arrayBullet[0]->SetActorRotation(GetActorRotation());
+		arrayBullet[0]->SetActorRotation(rot);
 
 		//탄창에서 하나씩 빼서 총알을 활성화 시킨다.
 		arrayBullet[0]->SetActive(true);
@@ -149,7 +159,7 @@ void APlayerPawn::MakeBullet(FVector pos)
 	else
 	{
 		//2. 총알공장에서 총알을 만든다.
-		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bulletFactory, pos, GetActorRotation());
+		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bulletFactory, pos, rot);
 		//파괴될 때 호출할 수 있는 함수 등록(딜리게이트 이용!)
 		bullet->onDestroyBullet.AddDynamic(this, &APlayerPawn::AddBullet);
 	}
@@ -171,28 +181,25 @@ void APlayerPawn::InputSkill1()
 		bulletPos = GetActorLocation();
 		// (i * 총알간격) - (발사갯수 - 1) * (총알간격 / 2)
 		bulletPos.Y += (i * bulletGap) - (bulletCount - 1) * (bulletGap / 2);
-		MakeBullet(bulletPos);
+		MakeBullet(bulletPos, GetActorRotation());
 	}
 }
 
 void APlayerPawn::InputSkill2()
 {
-	FVector bulletPos;
+	currFireBulletCount = 0;
+	return;
 
-	//플레이어가 있는 위치에서 왼쪽으로 -100 만큼 떨어진 곳
-	bulletPos = GetActorLocation();
-	bulletPos.Y += -100;
-	MakeBullet(bulletPos);
+	//한번에 나올 총알 갯수
+	int32 count = 60;
+	//총알 간의 각도
+	int32 unitAngle = 360 / count;
 
-	//플레이어가 있는 위치에서 
-	bulletPos = GetActorLocation();
-	bulletPos.Y += 0;
-	MakeBullet(bulletPos);
-
-	//플레이어가 있는 위치에서 오른쪽으로 +100 만큼 떨어진 곳
-	bulletPos = GetActorLocation();
-	bulletPos.Y += 100;
-	MakeBullet(bulletPos);
+	for (int32 i = 0; i < count; i++)
+	{
+		FRotator rot = FRotator(0, 0, unitAngle * i);
+		MakeBullet(GetActorLocation(), rot);
+	}
 }
 
 
