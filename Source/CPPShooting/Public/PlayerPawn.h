@@ -46,7 +46,7 @@ public:
 	float currTime = 0;
 	//발사 시간
 	UPROPERTY(EditAnywhere)
-	float fireTime = 0.2f;
+	float fireTime = 0.01f;
 
 	//총알 탄창
 	UPROPERTY(EditAnywhere)
@@ -71,7 +71,7 @@ public:
 	float bulletGap = 100;
 
 	//원형으로 발사되는 총알 현재 갯수
-	int32 currFireBulletCount = 10;
+	int32 currFireBulletCount = 100;
 
 	void InputSkill1();
 	void InputSkill2();

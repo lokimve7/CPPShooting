@@ -77,7 +77,7 @@ void APlayerPawn::Tick(float DeltaTime)
 	SetActorLocation(p);
 
 	//만약에 currFireBulletCount 값이 10 보다 작으면
-	if (currFireBulletCount < 10)
+	if (currFireBulletCount < 100)
 	{
 		//시간을 흐르게 한다.
 		currTime += DeltaTime;
@@ -85,7 +85,7 @@ void APlayerPawn::Tick(float DeltaTime)
 		if (currTime > fireTime)
 		{
 			//총알을 발사한다.
-			int32 angle = 360 / 10;
+			float angle = 360 / 100.0f;
 			FRotator rot = FRotator(0, 0, angle * currFireBulletCount);
 			MakeBullet(GetActorLocation(), rot);
 
