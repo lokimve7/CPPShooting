@@ -61,6 +61,17 @@ public:
 	void InputHorizontal(float value);
 	void InputVertical(float value);
 	void InputFire();
+	void MakeBullet(FVector pos);
+
+	//한번에 발사 가능 갯수
+	UPROPERTY(EditAnywhere)
+	int32 bulletCount = 1;
+	//총알의 좌우 간격
+	UPROPERTY(EditAnywhere)
+	float bulletGap = 100;
+
+	void InputSkill1();
+	void InputSkill2();
 
 	UFUNCTION()
 	void AddBullet(class ABullet* bullet);

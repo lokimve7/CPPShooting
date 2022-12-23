@@ -5,6 +5,7 @@
 #include <Components/BoxComponent.h>
 #include "Bullet.h"
 #include "PointerTest.h"
+#include "../CPPShootingGameModeBase.h"
 
 
 // Sets default values
@@ -98,7 +99,13 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis(TEXT("Vertical"), this, &APlayerPawn::InputVertical);
 	//Fire 가 호출될 때 실행되는 함수 등록
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Released, this, &APlayerPawn::InputFire);
+
+	//Skill_1 등록
+	PlayerInputComponent->BindAction(TEXT("Skill_1"), IE_Released, this, &APlayerPawn::InputSkill1);
+	//SKill_2 등록
+	PlayerInputComponent->BindAction<FTest>(TEXT("Skill_2"), IE_Released, this, &APlayerPawn::InputSkill2);
 }
+
 
 void APlayerPawn::InputHorizontal(float value)
 {
@@ -114,15 +121,27 @@ void APlayerPawn::InputVertical(float value)
 
 void APlayerPawn::InputFire()
 {		
+	//MakeBullet(GetActorLocation());
+
+	//발사 가능 블랫 갯수 계산 (GameModeBase 에 있는 currScore에 따라서)
+	ACPPShootingGameModeBase* currMode = GetWorld()->GetAuthGameMode<ACPPShootingGameModeBase>();
+	//점수 / 5 + 1
+	bulletCount = currMode->currScore / 5 + 1;  // 10 / 5 = 2
+
+	InputSkill1();
+}
+
+void APlayerPawn::MakeBullet(FVector pos)
+{
 	//만약에 arrayBullet의 갯수가 0보다 클 때
 	if (arrayBullet.Num() > 0)
 	{
 		//총알의 위치, 회전 값을 Player 값으로 셋팅한다.
-		arrayBullet[0]->SetActorLocation(GetActorLocation());
+		arrayBullet[0]->SetActorLocation(pos);
 		arrayBullet[0]->SetActorRotation(GetActorRotation());
 
 		//탄창에서 하나씩 빼서 총알을 활성화 시킨다.
-		arrayBullet[0]->SetActive(true);	
+		arrayBullet[0]->SetActive(true);
 
 		//탄창에서 뺀다.
 		arrayBullet.RemoveAt(0);
@@ -130,7 +149,7 @@ void APlayerPawn::InputFire()
 	else
 	{
 		//2. 총알공장에서 총알을 만든다.
-		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bulletFactory, GetActorLocation(), GetActorRotation());
+		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bulletFactory, pos, GetActorRotation());
 		//파괴될 때 호출할 수 있는 함수 등록(딜리게이트 이용!)
 		bullet->onDestroyBullet.AddDynamic(this, &APlayerPawn::AddBullet);
 	}
@@ -140,6 +159,40 @@ void APlayerPawn::AddBullet(ABullet* bullet)
 {
 	UE_LOG(LogTemp, Warning, TEXT("AddBullet"));
 	arrayBullet.Add(bullet);
+}
+
+void APlayerPawn::InputSkill1()
+{
+	FVector bulletPos;
+
+	//한번에 발사 할 수 있는 갯수 만큼 반복한다.
+	for (int32 i = 0; i < bulletCount; i++)
+	{
+		bulletPos = GetActorLocation();
+		// (i * 총알간격) - (발사갯수 - 1) * (총알간격 / 2)
+		bulletPos.Y += (i * bulletGap) - (bulletCount - 1) * (bulletGap / 2);
+		MakeBullet(bulletPos);
+	}
+}
+
+void APlayerPawn::InputSkill2()
+{
+	FVector bulletPos;
+
+	//플레이어가 있는 위치에서 왼쪽으로 -100 만큼 떨어진 곳
+	bulletPos = GetActorLocation();
+	bulletPos.Y += -100;
+	MakeBullet(bulletPos);
+
+	//플레이어가 있는 위치에서 
+	bulletPos = GetActorLocation();
+	bulletPos.Y += 0;
+	MakeBullet(bulletPos);
+
+	//플레이어가 있는 위치에서 오른쪽으로 +100 만큼 떨어진 곳
+	bulletPos = GetActorLocation();
+	bulletPos.Y += 100;
+	MakeBullet(bulletPos);
 }
 
 
